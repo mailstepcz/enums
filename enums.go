@@ -34,7 +34,7 @@ type Enum struct {
 	defaultValue String
 }
 
-// DefaultValue ...
+// DefaultValue returns the default value of the enum.
 func (e *Enum) DefaultValue() String {
 	return e.defaultValue
 }
