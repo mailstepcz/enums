@@ -23,8 +23,9 @@ type ClosedEnum interface {
 }
 
 // Transitioner is a transition verifier.
-type Transitioner[T any] interface {
+type Transitioner[T ClosedEnum] interface {
 	CanTransition(T) bool
+	Eq(T) bool
 }
 
 // Compare compares two interned strings.
@@ -77,4 +78,32 @@ func (e *Enum) Get(s string) (String, bool) {
 		return r.Value, true
 	}
 	return "", false
+}
+
+// Transition is a state transition.
+type Transition[T ClosedEnum] struct {
+	From T
+	To   T
+}
+
+// AllowedTransitions returns a slice of allowed transitions.
+func AllowedTransitions[E interface {
+	ClosedEnum
+	Transitioner[E]
+}](states ...E) ([]Transition[E], error) {
+	var ts []Transition[E]
+	for _, from := range states {
+		for _, to := range states {
+			if from.CanTransition(to) {
+				if from.Eq(to) {
+					return nil, ErrTransitionNotAllowed
+				}
+				ts = append(ts, Transition[E]{
+					From: from,
+					To:   to,
+				})
+			}
+		}
+	}
+	return ts, nil
 }

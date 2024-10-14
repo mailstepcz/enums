@@ -47,6 +47,10 @@ func (v AbcEnum) CanTransition(newState AbcEnum) bool {
 	return false
 }
 
+func (v AbcEnum) Eq(other AbcEnum) bool {
+	return string(v) == string(other)
+}
+
 func TestClosedEnum(t *testing.T) {
 	r := require.New(t)
 
@@ -73,4 +77,12 @@ func TestEnumInterned(t *testing.T) {
 	r.True(ok)
 
 	r.True(unsafe.StringData(string(e1)) == unsafe.StringData(string(e2)))
+}
+
+func TestAllowedTransitions(t *testing.T) {
+	r := require.New(t)
+
+	ts, err := AllowedTransitions(A1, B2, C3)
+	r.NoError(err)
+	r.Equal(2, len(ts))
 }
