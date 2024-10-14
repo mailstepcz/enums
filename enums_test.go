@@ -19,7 +19,10 @@ const (
 
 var abcEnum = NewClosedEnum(A1, B2, C3)
 
-var _ ClosedEnum = AbcEnum("")
+var (
+	_ ClosedEnum            = AbcEnum("")
+	_ Transitioner[AbcEnum] = AbcEnum("")
+)
 
 func (v AbcEnum) EnumValueIsValid() bool {
 	_, ok := EnumGet[AbcEnum](&abcEnum, string(v))
@@ -32,6 +35,16 @@ func (v AbcEnum) DefaultValue() string {
 
 func (v AbcEnum) Value() (driver.Value, error) {
 	return string(v), nil
+}
+
+func (v AbcEnum) CanTransition(newState AbcEnum) bool {
+	switch v {
+	case A1:
+		return newState == B2
+	case B2:
+		return newState == C3
+	}
+	return false
 }
 
 func TestClosedEnum(t *testing.T) {
