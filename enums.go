@@ -2,11 +2,15 @@ package enums
 
 import (
 	"database/sql/driver"
+	"errors"
 	"strings"
 	"unsafe"
 
 	"github.com/fealsamh/datastructures/unionfind"
 )
+
+// ErrTransitionNotAllowed signifies a forbidden transition.
+var ErrTransitionNotAllowed = errors.New("transition not allowed")
 
 // String is an interned string.
 type String string
@@ -16,6 +20,11 @@ type ClosedEnum interface {
 	driver.Valuer
 	EnumValueIsValid() bool
 	DefaultValue() string
+}
+
+// Transitioner is a transition verifier.
+type Transitioner[T any] interface {
+	CanTransition(T) bool
 }
 
 // Compare compares two interned strings.
@@ -34,7 +43,7 @@ type Enum struct {
 	defaultValue String
 }
 
-// DefaultValue ...
+// DefaultValue returns the default value of the enum.
 func (e *Enum) DefaultValue() String {
 	return e.defaultValue
 }
