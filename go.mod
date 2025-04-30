@@ -1,10 +1,12 @@
 module github.com/mailstepcz/enums
 
-go 1.22.0
+go 1.24
+
+toolchain go1.24.2
 
 require (
-	github.com/fealsamh/datastructures v0.1.11
-	github.com/stretchr/testify v1.9.0
+	github.com/mailstepcz/datastructures v0.1.12
+	github.com/stretchr/testify v1.10.0
 )
 
 require (
